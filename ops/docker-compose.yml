@@ -6,6 +6,6 @@ services:
       context: .
       dockerfile: dev.Dockerfile
     volumes:
-      - ..:/home/rust/
+      - ..:/home/rust
     ports:
       - 220:22
