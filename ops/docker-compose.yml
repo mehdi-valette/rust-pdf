@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  rust-pdf:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ..:/home/rust/
+    ports:
+      - 220:22
