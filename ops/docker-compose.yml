@@ -2,6 +2,8 @@ version: "3.8"
 
 services:
   rust-pdf:
+    container_name: rust-pdf
+    hostname: rust-pdf
     build:
       context: .
       dockerfile: dev.Dockerfile

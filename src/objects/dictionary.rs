@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{Name, PdfElement};
 
 pub struct Dictionary {
-    pub dict: HashMap<Name, Box<dyn PdfElement>>,
+    dict: HashMap<Name, Box<dyn PdfElement>>,
 }
 
 impl PdfElement for Dictionary {
@@ -19,5 +19,19 @@ impl PdfElement for Dictionary {
         entries.extend(b"\n>>");
 
         entries
+    }
+}
+
+impl Dictionary {
+    pub fn new() -> Dictionary {
+        return Dictionary {
+            dict: HashMap::new(),
+        };
+    }
+
+    pub fn set(&mut self, name: &str, value: Box<dyn PdfElement>) -> &mut Self {
+        self.dict.insert(Name { name: name.into() }, value);
+
+        self
     }
 }

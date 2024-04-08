@@ -1,6 +1,5 @@
 use rust_pdf::*;
 
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -12,28 +11,34 @@ fn main() -> std::io::Result<()> {
     };
 
     let mut trailer = Trailer {
-        dictionary: Dictionary {
-            dict: HashMap::new(),
-        },
+        dictionary: Dictionary::new(),
     };
 
-    trailer.dictionary.dict.insert(
-        Name {
-            name: "Test".into(),
-        },
-        Box::new(Reference {
-            identifier: 45,
-            update: 10,
-        }),
-    );
-
-    trailer.dictionary.dict.insert(
-        Name { name: "M".into() },
-        Box::new(Reference {
-            identifier: 12,
-            update: 20,
-        }),
-    );
+    trailer
+        .dictionary
+        .set(
+            "identifier",
+            Box::new(Reference {
+                identifier: 45,
+                update: 10,
+            }),
+        )
+        .set("booleanTrue", Box::new(PdfBoolean::new(true)))
+        .set("booleanFalse", Box::new(PdfBoolean::new(false)))
+        .set(
+            "stringLiteral",
+            Box::new(PdfString::new(
+                "Hello World !<>()",
+                PdfStringEncoding::Literal,
+            )),
+        )
+        .set(
+            "stringHexa",
+            Box::new(PdfString::new(
+                "Hello World !<>()",
+                PdfStringEncoding::Hexadecimal,
+            )),
+        );
 
     let document = Document { header, trailer };
 
