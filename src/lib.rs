@@ -1,8 +1,8 @@
 mod objects;
 
 pub use objects::{
-    Dictionary, Document, Header, Name, PdfBoolean, PdfString, PdfStringEncoding, Reference,
-    Trailer,
+    Dictionary, Document, Header, IndirectObject, PdfBoolean, PdfName, PdfString,
+    PdfStringEncoding, Reference, Trailer,
 };
 
 pub trait PdfElement {

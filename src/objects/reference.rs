@@ -1,13 +1,13 @@
 use crate::PdfElement;
 
 pub struct Reference {
-    pub identifier: u32,
-    pub update: u32,
+    pub object_number: u32,
+    pub genration_number: u32,
 }
 
 impl PdfElement for Reference {
     fn print(&self) -> Vec<u8> {
-        format!("{} {} R", self.identifier, self.update)
+        format!("{} {} R", self.object_number, self.genration_number)
             .as_bytes()
             .to_vec()
     }

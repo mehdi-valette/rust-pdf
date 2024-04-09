@@ -46,10 +46,10 @@ fn bytes_to_hexadecimal(text: &[u8]) -> Vec<u8> {
         let higher = character >> 4u8;
         let lower = character & 0x0Fu8;
 
-        formatted_characters.append(&mut Vec::from([
+        formatted_characters.extend([
             HEXA_ALPHABET[usize::from(higher)],
             HEXA_ALPHABET[usize::from(lower)],
-        ]));
+        ]);
     }
 
     formatted_characters
