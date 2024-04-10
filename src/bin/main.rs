@@ -14,19 +14,15 @@ fn main() -> std::io::Result<()> {
         dictionary: Dictionary::new(),
     };
 
-    let mut body: Vec<Box<dyn PdfElement>> = Vec::new();
+    let mut body: Vec<IndirectObject> = Vec::new();
 
-    body.push(Box::new(IndirectObject::new(
+    body.push(IndirectObject::new(
         10,
         0,
         Box::new(PdfString::new("I am an object", PdfStringEncoding::Literal)),
-    )));
+    ));
 
-    body.push(Box::new(IndirectObject::new(
-        11,
-        0,
-        Box::new(PdfBoolean::new(true)),
-    )));
+    body.push(IndirectObject::new(11, 0, Box::new(PdfBoolean::new(true))));
 
     trailer
         .dictionary
@@ -54,15 +50,15 @@ fn main() -> std::io::Result<()> {
             )),
         );
 
-    let document = Document {
+    let mut document = Document {
         header,
         body,
         trailer,
     };
 
-    let text = &document.print();
+    let text = document.print();
 
-    file.write(text)?;
+    file.write(&text)?;
 
     Ok(())
 }
