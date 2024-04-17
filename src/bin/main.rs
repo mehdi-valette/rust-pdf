@@ -17,12 +17,12 @@ fn main() -> std::io::Result<()> {
     let mut body: Vec<IndirectObject> = Vec::new();
 
     body.push(IndirectObject::new(
-        10,
+        1,
         0,
         Box::new(PdfString::new("I am an object", PdfStringEncoding::Literal)),
     ));
 
-    body.push(IndirectObject::new(11, 0, Box::new(PdfBoolean::new(true))));
+    body.push(IndirectObject::new(2, 0, Box::new(PdfBoolean::new(true))));
 
     trailer
         .dictionary

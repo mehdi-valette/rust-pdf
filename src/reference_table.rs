@@ -5,6 +5,7 @@ pub fn print(body: &Vec<IndirectObject>) -> Vec<u8> {
 
     reference_table.extend(b"xref\n");
     reference_table.extend(format!("{} 0\n", body.len()).as_bytes());
+    reference_table.extend(b"0000000000 65535 f\n");
 
     for obj in body.iter() {
         reference_table.extend(byte_offset(obj.get_offset()));

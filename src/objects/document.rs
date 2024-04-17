@@ -21,11 +21,13 @@ impl Document {
             pdf.extend(b"\n\n");
         }
 
+        let xref_begining = pdf.len() as u32;
+
         pdf.extend(print_reference_table(&self.body));
 
-        pdf.extend(b"\n\n");
+        pdf.extend(b"\n");
 
-        pdf.extend(self.trailer.print());
+        pdf.extend(self.trailer.print_trailer(&xref_begining));
 
         pdf
     }
