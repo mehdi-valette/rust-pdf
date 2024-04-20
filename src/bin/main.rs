@@ -30,7 +30,7 @@ fn main() -> std::io::Result<()> {
             "identifier",
             Box::new(Reference {
                 object_number: 45,
-                genration_number: 10,
+                generation_number: 10,
             }),
         )
         .set("booleanTrue", Box::new(PdfBoolean::new(true)))
