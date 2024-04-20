@@ -6,55 +6,14 @@ use std::io::prelude::*;
 fn main() -> std::io::Result<()> {
     let mut file = File::create("test.txt")?;
 
-    let header = Header {
-        pdf_version: "2.0".into(),
-    };
+    let mut document = Document::new();
 
-    let mut trailer = Trailer {
-        dictionary: Dictionary::new(),
-    };
+    document.push(Box::new(PdfString::new(
+        "I am an object".to_string(),
+        PdfStringEncoding::Literal,
+    )));
 
-    let mut body: Vec<IndirectObject> = Vec::new();
-
-    body.push(IndirectObject::new(
-        1,
-        0,
-        Box::new(PdfString::new("I am an object", PdfStringEncoding::Literal)),
-    ));
-
-    body.push(IndirectObject::new(2, 0, Box::new(PdfBoolean::new(true))));
-
-    trailer
-        .dictionary
-        .set(
-            "identifier",
-            Box::new(Reference {
-                object_number: 45,
-                generation_number: 10,
-            }),
-        )
-        .set("booleanTrue", Box::new(PdfBoolean::new(true)))
-        .set("booleanFalse", Box::new(PdfBoolean::new(false)))
-        .set(
-            "stringLiteral",
-            Box::new(PdfString::new(
-                "Hello World !<>()",
-                PdfStringEncoding::Literal,
-            )),
-        )
-        .set(
-            "stringHexa",
-            Box::new(PdfString::new(
-                "Hello World !<>()",
-                PdfStringEncoding::Hexadecimal,
-            )),
-        );
-
-    let mut document = Document {
-        header,
-        body,
-        trailer,
-    };
+    document.push(Box::new(PdfBoolean::new(true)));
 
     let text = document.print();
 

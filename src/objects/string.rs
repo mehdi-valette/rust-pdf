@@ -4,8 +4,8 @@ static HEXA_ALPHABET: [u8; 16] = [
     b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'A', b'B', b'C', b'D', b'E', b'F',
 ];
 
-pub struct PdfString<'a> {
-    text: &'a str,
+pub struct PdfString {
+    text: String,
     encoding: PdfStringEncoding,
 }
 
@@ -14,7 +14,7 @@ pub enum PdfStringEncoding {
     Hexadecimal,
 }
 
-impl<'a> PdfElement for PdfString<'a> {
+impl PdfElement for PdfString {
     fn print(&self) -> Vec<u8> {
         let mut formatted_text: Vec<u8> = Vec::new();
 
@@ -33,8 +33,8 @@ impl<'a> PdfElement for PdfString<'a> {
     }
 }
 
-impl<'a> PdfString<'a> {
-    pub fn new(text: &'a str, encoding: PdfStringEncoding) -> Self {
+impl PdfString {
+    pub fn new(text: String, encoding: PdfStringEncoding) -> Self {
         PdfString { text, encoding }
     }
 }
