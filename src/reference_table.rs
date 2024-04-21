@@ -1,6 +1,6 @@
 use crate::objects::IndirectObject;
 
-pub fn print(body: &Vec<IndirectObject>) -> Vec<u8> {
+pub fn print(body: &Vec<&IndirectObject>) -> Vec<u8> {
     let mut reference_table: Vec<u8> = Vec::new();
 
     reference_table.extend(b"xref\n");

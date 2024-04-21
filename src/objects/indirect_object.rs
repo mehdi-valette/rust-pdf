@@ -1,4 +1,4 @@
-use crate::PdfElement;
+use crate::{PdfArray, PdfElement, Reference};
 
 pub struct IndirectObject {
     object_number: u32,
@@ -8,7 +8,16 @@ pub struct IndirectObject {
 }
 
 impl IndirectObject {
-    pub fn new(object_number: u32, generation_number: u32, content: Box<dyn PdfElement>) -> Self {
+    pub fn new() -> IndirectObject {
+        IndirectObject {
+            object_number: 0,
+            generation_number: 0,
+            content: Box::new(PdfArray::new()),
+            offset: 0,
+        }
+    }
+
+    pub fn make(object_number: u32, generation_number: u32, content: Box<dyn PdfElement>) -> Self {
         IndirectObject {
             object_number,
             generation_number,
@@ -17,12 +26,24 @@ impl IndirectObject {
         }
     }
 
+    pub fn get_reference(&self) -> Reference {
+        Reference::make(self)
+    }
+
     pub fn get_object_number(&self) -> &u32 {
         &self.object_number
     }
 
     pub fn get_generation_number(&self) -> &u32 {
         &self.generation_number
+    }
+
+    pub fn get_content(&self) -> &Box<dyn PdfElement> {
+        &self.content
+    }
+
+    pub fn get_content_mut(&mut self) -> &mut Box<dyn PdfElement> {
+        &mut self.content
     }
 
     pub fn set_offset(&mut self, offset: u32) {
@@ -46,5 +67,13 @@ impl PdfElement for IndirectObject {
         object.extend(b"\nendobj");
 
         object
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
     }
 }

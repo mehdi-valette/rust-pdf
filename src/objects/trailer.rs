@@ -1,8 +1,12 @@
 use uuid::Uuid;
 
-use crate::{Dictionary, Number, PdfArray, PdfElement, PdfString, PdfStringEncoding};
+use crate::{Dictionary, Number, PdfArray, PdfElement, PdfString, PdfStringEncoding, Reference};
 
-pub fn print_trailer<'a>(xref_offset: &u32, reference_count: &u32) -> Vec<u8> {
+pub fn print_trailer<'a>(
+    xref_offset: &u32,
+    reference_count: &u32,
+    catalog_reference: &Reference,
+) -> Vec<u8> {
     let mut text: Vec<u8> = Vec::new();
     let mut dictionary = Dictionary::new();
     let mut id_array: Vec<Box<dyn PdfElement>> = Vec::new();
@@ -13,8 +17,10 @@ pub fn print_trailer<'a>(xref_offset: &u32, reference_count: &u32) -> Vec<u8> {
     id_array.push(Box::new(identifier));
     id_array.push(Box::new(update));
 
-    dictionary.set("Size", Box::new(Number::new(*reference_count as f32)));
-    dictionary.set("ID", Box::new(PdfArray::make(id_array)));
+    dictionary
+        .insert("Size", Number::new(*reference_count as f32))
+        .insert("ID", PdfArray::make(id_array))
+        .insert("Root", catalog_reference.clone());
 
     text.extend(b"trailer");
     text.extend(dictionary.print().as_slice());

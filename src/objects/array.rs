@@ -12,6 +12,12 @@ impl PdfArray {
     pub fn make(values: Vec<Box<dyn PdfElement>>) -> Self {
         PdfArray { values }
     }
+
+    pub fn add(&mut self, value: impl PdfElement + 'static) -> &mut Self {
+        self.values.push(Box::new(value));
+
+        self
+    }
 }
 
 impl PdfElement for PdfArray {
@@ -22,7 +28,7 @@ impl PdfElement for PdfArray {
 
         for (index, value) in self.values.iter().enumerate() {
             if index != 0 {
-                text.extend(b",");
+                text.extend(b" ");
             }
 
             text.extend(value.print());
@@ -31,5 +37,13 @@ impl PdfElement for PdfArray {
         text.extend(b"]");
 
         text
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
     }
 }

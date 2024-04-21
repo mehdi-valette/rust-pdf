@@ -7,6 +7,7 @@ mod indirect_object;
 mod name;
 mod number;
 mod reference;
+mod stream;
 mod string;
 mod trailer;
 
@@ -19,6 +20,7 @@ pub use indirect_object::IndirectObject;
 pub use name::PdfName;
 pub use number::Number;
 pub use reference::Reference;
+pub use stream::Stream;
 pub use string::PdfString;
 pub use string::PdfStringEncoding;
 pub use trailer::print_trailer;
