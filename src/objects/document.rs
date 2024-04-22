@@ -11,6 +11,7 @@ pub struct Document {
     pub body: BTreeMap<Reference, IndirectObject>,
     object_count: u32,
     catalog: Reference,
+    page_root: Reference,
 }
 
 impl Document {
@@ -44,6 +45,37 @@ impl Document {
         }
     }
 
+    pub fn add_page(&mut self, page: Dictionary) {
+        let page_reference = self.push(Box::new(page)).get_reference();
+
+        let page_root = self
+            .body
+            .get_mut(&self.page_root)
+            .expect("page root is not found");
+
+        let page_root_dictionary = page_root
+            .get_content_mut()
+            .as_any_mut()
+            .downcast_mut::<Dictionary>()
+            .expect("page root doesn't have a dictionary");
+
+        page_root_dictionary
+            .get_mut("Kids")
+            .expect("page root dictionary has no entry \"Kids\"")
+            .as_any_mut()
+            .downcast_mut::<PdfArray>()
+            .expect("entry \"Kids\" is not an array")
+            .add(page_reference);
+
+        page_root_dictionary
+            .get_mut("Count")
+            .expect("no entry \"Count\"")
+            .as_any_mut()
+            .downcast_mut::<Number>()
+            .expect("\"Count\" is not a number")
+            .incr();
+    }
+
     pub fn new() -> Self {
         let header: Header = Header {
             pdf_version: "2.0".into(),
@@ -56,6 +88,7 @@ impl Document {
             body,
             object_count: 0,
             catalog: Reference::new(),
+            page_root: Reference::new(),
         };
 
         let mut page_tree = Dictionary::new();
@@ -64,15 +97,16 @@ impl Document {
             .insert("Kids", PdfArray::new())
             .insert("Count", Number::new(0f32));
 
-        let page_tree_object = document.push(Box::new(page_tree));
+        let page_tree_object = document.push(Box::new(page_tree)).get_reference();
 
         let mut catalog = Dictionary::new();
         catalog
             .insert("Type", PdfName::new("Catalog"))
-            .insert("Pages", Reference::make(page_tree_object));
+            .insert("Pages", page_tree_object.clone());
 
         let catalog_object = document.push(Box::new(catalog));
         document.catalog = catalog_object.get_reference();
+        document.page_root = page_tree_object;
 
         document
     }

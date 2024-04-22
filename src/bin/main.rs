@@ -22,35 +22,7 @@ fn main() -> std::io::Result<()> {
         .insert("Resources", Dictionary::new())
         .insert("Parent", Reference::new());
 
-    let first_page_reference = document.push(Box::new(first_page)).get_reference();
-
-    let pages_ref = document
-        .get_object(document.get_catalog())
-        .expect("document has no catalog")
-        .get_content()
-        .as_any()
-        .downcast_ref::<Dictionary>()
-        .expect("catalog doesn't container a dictionary")
-        .get("Pages")
-        .expect("catalog's dictionary doesn't contain an entry \"pages\"")
-        .as_any()
-        .downcast_ref::<Reference>()
-        .expect("catalog's \"pages\" isn't a reference")
-        .clone();
-
-    document
-        .get_object_mut(pages_ref)
-        .expect("document has no page tree")
-        .get_content_mut()
-        .as_any_mut()
-        .downcast_mut::<Dictionary>()
-        .expect("pages doesn't contain a dictionary")
-        .get_mut("Kids")
-        .expect("pages' dictionary should have an entry \"Kids\"")
-        .as_any_mut()
-        .downcast_mut::<PdfArray>()
-        .expect("pages' \"Kids\" entry isn't an array")
-        .add(first_page_reference);
+    document.add_page(first_page);
 
     let text = document.print();
 

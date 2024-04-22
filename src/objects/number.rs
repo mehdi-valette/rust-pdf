@@ -8,6 +8,10 @@ impl Number {
     pub fn new(number: f32) -> Number {
         Number { number }
     }
+
+    pub fn incr(&mut self) {
+        self.number += 1f32;
+    }
 }
 
 impl PdfElement for Number {
