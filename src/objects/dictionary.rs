@@ -1,6 +1,6 @@
+use crate::objects::PdfName;
+use crate::PdfElement;
 use std::{any::Any, collections::BTreeMap};
-
-use crate::{PdfElement, PdfName};
 
 pub struct Dictionary {
     dict: BTreeMap<String, Box<dyn PdfElement>>,

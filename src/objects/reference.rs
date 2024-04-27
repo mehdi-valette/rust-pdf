@@ -1,4 +1,5 @@
-use crate::{IndirectObject, PdfElement};
+use crate::objects::IndirectObject;
+use crate::PdfElement;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub struct Reference {

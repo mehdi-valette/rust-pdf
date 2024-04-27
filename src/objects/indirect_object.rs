@@ -1,4 +1,5 @@
-use crate::{PdfArray, PdfElement, Reference};
+use crate::objects::{PdfArray, Reference};
+use crate::PdfElement;
 
 pub struct IndirectObject {
     object_number: u32,

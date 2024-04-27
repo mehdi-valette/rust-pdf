@@ -1,4 +1,5 @@
-use crate::{Dictionary, Number, PdfElement};
+use crate::objects::{Dictionary, Number};
+use crate::PdfElement;
 
 pub struct Stream {
     dictionary: Dictionary,
@@ -19,7 +20,7 @@ impl PdfElement for Stream {
         let mut text: Vec<u8> = Vec::new();
 
         text.extend(self.dictionary.print());
-        text.extend(b"\nstream");
+        text.extend(b"\nstream\n");
         text.extend(self.data.iter());
         text.extend(b"\nendstream");
 

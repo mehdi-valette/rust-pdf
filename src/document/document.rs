@@ -1,10 +1,12 @@
 use std::collections::BTreeMap;
 
-use crate::reference_table::print as print_reference_table;
-use crate::{
-    print_trailer, Dictionary, Header, IndirectObject, Number, PdfArray, PdfElement, PdfName,
-    Reference,
+use crate::document::Header;
+use crate::objects::{
+    print_trailer, Dictionary, IndirectObject, Number, PdfArray, PdfName, Reference,
 };
+use crate::PdfElement;
+
+use super::reference_table;
 
 pub struct Document {
     pub header: Header,
@@ -38,11 +40,20 @@ impl Document {
         self.body.get_mut(&id)
     }
 
-    pub fn get_catalog(&self) -> Reference {
-        match self.catalog.as_any().downcast_ref::<Reference>() {
-            None => panic!("Cannot get the dictionary for the catalog"),
-            Some(dictionary) => dictionary.clone(),
-        }
+    pub fn get_catalog_reference(&self) -> Reference {
+        self.catalog
+            .as_any()
+            .downcast_ref::<Reference>()
+            .expect("cannot get the catalog")
+            .clone()
+    }
+
+    pub fn get_page_root_reference(&self) -> Reference {
+        self.page_root
+            .as_any()
+            .downcast_ref::<Reference>()
+            .expect("cannot get page root")
+            .clone()
     }
 
     pub fn add_page(&mut self, page: Dictionary) {
@@ -91,11 +102,19 @@ impl Document {
             page_root: Reference::new(),
         };
 
+        let mut page_size = PdfArray::new();
+        page_size
+            .add(Number::new(0f32))
+            .add(Number::new(0f32))
+            .add(Number::new(595f32))
+            .add(Number::new(792f32));
+
         let mut page_tree = Dictionary::new();
         page_tree
             .insert("Type", PdfName::new("Pages"))
             .insert("Kids", PdfArray::new())
-            .insert("Count", Number::new(0f32));
+            .insert("Count", Number::new(0f32))
+            .insert("MediaBox", page_size);
 
         let page_tree_object = document.push(Box::new(page_tree)).get_reference();
 
@@ -126,7 +145,7 @@ impl Document {
 
         let xref_begining = pdf.len() as u32;
 
-        pdf.extend(print_reference_table(
+        pdf.extend(reference_table::print(
             &self.body.iter().map(|(_, value)| value).collect(),
         ));
 

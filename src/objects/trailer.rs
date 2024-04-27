@@ -1,6 +1,6 @@
+use crate::objects::{Dictionary, Number, PdfArray, PdfString, PdfStringEncoding, Reference};
+use crate::PdfElement;
 use uuid::Uuid;
-
-use crate::{Dictionary, Number, PdfArray, PdfElement, PdfString, PdfStringEncoding, Reference};
 
 pub fn print_trailer<'a>(
     xref_offset: &u32,
@@ -22,7 +22,7 @@ pub fn print_trailer<'a>(
         .insert("ID", PdfArray::make(id_array))
         .insert("Root", catalog_reference.clone());
 
-    text.extend(b"trailer");
+    text.extend(b"trailer\n");
     text.extend(dictionary.print().as_slice());
     text.extend(b"\nstartxref\n");
     text.extend(format!("{}\n", xref_offset).as_bytes());

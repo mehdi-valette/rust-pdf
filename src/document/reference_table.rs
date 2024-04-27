@@ -4,7 +4,7 @@ pub fn print(body: &Vec<&IndirectObject>) -> Vec<u8> {
     let mut reference_table: Vec<u8> = Vec::new();
 
     reference_table.extend(b"xref\n");
-    reference_table.extend(format!("{} 0\n", body.len()).as_bytes());
+    reference_table.extend(format!("0 {}\n", body.len()).as_bytes());
     reference_table.extend(b"0000000000 65535 f\n");
 
     for obj in body.iter() {
@@ -59,7 +59,7 @@ mod tests {
     }
 
     #[test]
-    fn test_generation_offset() {
+    fn test_generation_number() {
         assert_eq!(&generation_number(&0), b"00000");
         assert_eq!(&generation_number(&5), b"00005");
         assert_eq!(&generation_number(&25), b"00025");
