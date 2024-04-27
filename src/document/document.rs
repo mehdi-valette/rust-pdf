@@ -1,9 +1,7 @@
 use std::collections::BTreeMap;
 
-use crate::document::Header;
-use crate::objects::{
-    print_trailer, Dictionary, IndirectObject, Number, PdfArray, PdfName, Reference,
-};
+use crate::document::{print_trailer, Header};
+use crate::objects::{Dictionary, IndirectObject, Number, PdfArray, PdfName, Reference};
 use crate::PdfElement;
 
 use super::reference_table;

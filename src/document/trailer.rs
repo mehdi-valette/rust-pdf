@@ -9,17 +9,13 @@ pub fn print_trailer<'a>(
 ) -> Vec<u8> {
     let mut text: Vec<u8> = Vec::new();
     let mut dictionary = Dictionary::new();
-    let mut id_array: Vec<Box<dyn PdfElement>> = Vec::new();
 
     let identifier = PdfString::new(Uuid::new_v4().to_string(), PdfStringEncoding::Hexadecimal);
     let update = PdfString::new(Uuid::new_v4().to_string(), PdfStringEncoding::Hexadecimal);
 
-    id_array.push(Box::new(identifier));
-    id_array.push(Box::new(update));
-
     dictionary
         .insert("Size", Number::new(*reference_count as f32))
-        .insert("ID", PdfArray::make(id_array))
+        .insert("ID", PdfArray::make(vec![identifier, update]))
         .insert("Root", catalog_reference.clone());
 
     text.extend(b"trailer\n");

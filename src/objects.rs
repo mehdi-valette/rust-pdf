@@ -7,7 +7,6 @@ mod number;
 mod reference;
 mod stream;
 mod string;
-mod trailer;
 
 pub use array::PdfArray;
 pub use boolean::PdfBoolean;
@@ -19,4 +18,3 @@ pub use reference::Reference;
 pub use stream::Stream;
 pub use string::PdfString;
 pub use string::PdfStringEncoding;
-pub use trailer::print_trailer;

@@ -1,5 +1,6 @@
 pub mod document;
 pub mod objects;
+pub mod structures;
 
 use std::any::Any;
 

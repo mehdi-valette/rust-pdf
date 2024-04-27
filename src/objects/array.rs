@@ -9,8 +9,14 @@ impl PdfArray {
         PdfArray { values: Vec::new() }
     }
 
-    pub fn make(values: Vec<Box<dyn PdfElement>>) -> Self {
-        PdfArray { values }
+    pub fn make(values: Vec<impl PdfElement + 'static>) -> Self {
+        let mut new_values: Vec<Box<dyn PdfElement>> = Vec::new();
+
+        for value in values {
+            new_values.push(Box::new(value));
+        }
+
+        PdfArray { values: new_values }
     }
 
     pub fn add(&mut self, value: impl PdfElement + 'static) -> &mut Self {
