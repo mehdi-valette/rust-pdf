@@ -5,6 +5,9 @@ authors=["Valette <mehdi.valette@gmail.com>"]
 
 edition = "2021"
 
+[dependencies]
+encoding = "0.2"
+
 [dependencies.uuid]
 version = "1.8.0"
 features = [

@@ -5,7 +5,7 @@ static HEXA_ALPHABET: [u8; 16] = [
 ];
 
 pub struct PdfString {
-    text: String,
+    text: Vec<u8>,
     encoding: PdfStringEncoding,
 }
 
@@ -20,12 +20,12 @@ impl PdfElement for PdfString {
 
         match self.encoding {
             PdfStringEncoding::Literal => {
-                formatted_text.extend([b"(", self.text.as_bytes(), b")"].concat());
+                formatted_text.extend([b"(", self.text.as_slice(), b")"].concat());
                 formatted_text
             }
             PdfStringEncoding::Hexadecimal => {
                 formatted_text.extend(b"<");
-                formatted_text.extend(bytes_to_hexadecimal(self.text.as_bytes()));
+                formatted_text.extend(bytes_to_hexadecimal(self.text.as_slice()));
                 formatted_text.extend(b">");
                 formatted_text
             }
@@ -43,6 +43,13 @@ impl PdfElement for PdfString {
 
 impl PdfString {
     pub fn new(text: String, encoding: PdfStringEncoding) -> Self {
+        PdfString {
+            text: text.into(),
+            encoding,
+        }
+    }
+
+    pub fn from_vec(text: Vec<u8>, encoding: PdfStringEncoding) -> Self {
         PdfString { text, encoding }
     }
 }
@@ -61,4 +68,18 @@ fn bytes_to_hexadecimal(text: &[u8]) -> Vec<u8> {
     }
 
     formatted_characters
+}
+
+#[cfg(test)]
+mod test {
+    use crate::objects::string::bytes_to_hexadecimal;
+
+    #[test]
+    fn test_bytes_to_hexadecimal() {
+        let test_data = [(&[0x24, 0xF8, 0xFF, 0x00], "24F8FF00".as_bytes().to_vec())];
+
+        for test in test_data {
+            assert_eq!(bytes_to_hexadecimal(test.0), test.1);
+        }
+    }
 }

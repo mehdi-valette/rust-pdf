@@ -10,8 +10,8 @@ fn main() -> std::io::Result<()> {
     let mut document = Document::new();
 
     let mut page = Page::new(&mut document);
-    page.add_font_type_1("F1", "Times-Roman")
-        .add_content(b"BT /F1 18 Tf 10 300 Td (Hello World) TjET".into());
+    page.add_font_type_1("F1", "Arial")
+        .add_text((50f32, 400f32), "Héllo World");
 
     let page_dict = page.get_dictionary();
 
