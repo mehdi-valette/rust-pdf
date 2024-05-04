@@ -4,14 +4,45 @@ static HEXA_ALPHABET: [u8; 16] = [
     b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'A', b'B', b'C', b'D', b'E', b'F',
 ];
 
+#[derive(Debug, PartialEq)]
+pub enum PdfStringEncoding {
+    Literal,
+    Hexadecimal,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct PdfString {
     text: Vec<u8>,
     encoding: PdfStringEncoding,
 }
 
-pub enum PdfStringEncoding {
-    Literal,
-    Hexadecimal,
+impl PdfString {
+    pub fn from_string(text: String, encoding: PdfStringEncoding) -> Self {
+        PdfString {
+            text: text.into(),
+            encoding,
+        }
+    }
+
+    pub fn from_vec(text: Vec<u8>, encoding: PdfStringEncoding) -> Self {
+        PdfString { text, encoding }
+    }
+}
+
+fn bytes_to_hexadecimal(text: &[u8]) -> Vec<u8> {
+    let mut formatted_characters: Vec<u8> = Vec::new();
+
+    for character in text {
+        let higher = character >> 4u8;
+        let lower = character & 0x0Fu8;
+
+        formatted_characters.extend([
+            HEXA_ALPHABET[usize::from(higher)],
+            HEXA_ALPHABET[usize::from(lower)],
+        ]);
+    }
+
+    formatted_characters
 }
 
 impl PdfElement for PdfString {
@@ -41,38 +72,80 @@ impl PdfElement for PdfString {
     }
 }
 
-impl PdfString {
-    pub fn new(text: String, encoding: PdfStringEncoding) -> Self {
-        PdfString {
-            text: text.into(),
-            encoding,
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_from_string() {
+        let test_data = [
+            (
+                ("helloé!$".to_string(), PdfStringEncoding::Literal),
+                PdfString {
+                    text: "helloé!$".as_bytes().to_vec(),
+                    encoding: PdfStringEncoding::Literal,
+                },
+            ),
+            (
+                ("helloé!$".to_string(), PdfStringEncoding::Hexadecimal),
+                PdfString {
+                    text: "helloé!$".as_bytes().to_vec(),
+                    encoding: PdfStringEncoding::Hexadecimal,
+                },
+            ),
+        ];
+
+        for test in test_data {
+            assert_eq!(PdfString::from_string(test.0 .0, test.0 .1), test.1);
         }
     }
 
-    pub fn from_vec(text: Vec<u8>, encoding: PdfStringEncoding) -> Self {
-        PdfString { text, encoding }
+    #[test]
+    fn test_from_vec() {
+        let test_data = [
+            (
+                ("helloé!$".as_bytes().to_vec(), PdfStringEncoding::Literal),
+                PdfString {
+                    text: "helloé!$".as_bytes().to_vec(),
+                    encoding: PdfStringEncoding::Literal,
+                },
+            ),
+            (
+                (
+                    "helloé!$".as_bytes().to_vec(),
+                    PdfStringEncoding::Hexadecimal,
+                ),
+                PdfString {
+                    text: "helloé!$".as_bytes().to_vec(),
+                    encoding: PdfStringEncoding::Hexadecimal,
+                },
+            ),
+        ];
+
+        for test in test_data {
+            assert_eq!(PdfString::from_vec(test.0 .0, test.0 .1), test.1);
+        }
     }
-}
 
-fn bytes_to_hexadecimal(text: &[u8]) -> Vec<u8> {
-    let mut formatted_characters: Vec<u8> = Vec::new();
+    #[test]
+    fn test_print() {
+        let test_data = [
+            (
+                ("Helloé!$".to_string(), PdfStringEncoding::Literal),
+                "(Helloé!$)".as_bytes().to_vec(),
+            ),
+            (
+                ("Helloé!$".to_string(), PdfStringEncoding::Hexadecimal),
+                "<48656C6C6FC3A92124>".as_bytes().to_vec(),
+            ),
+        ];
 
-    for character in text {
-        let higher = character >> 4u8;
-        let lower = character & 0x0Fu8;
+        for test in test_data {
+            let result = PdfString::from_string(test.0 .0, test.0 .1).print();
 
-        formatted_characters.extend([
-            HEXA_ALPHABET[usize::from(higher)],
-            HEXA_ALPHABET[usize::from(lower)],
-        ]);
+            assert_eq!(result, test.1)
+        }
     }
-
-    formatted_characters
-}
-
-#[cfg(test)]
-mod test {
-    use crate::objects::string::bytes_to_hexadecimal;
 
     #[test]
     fn test_bytes_to_hexadecimal() {

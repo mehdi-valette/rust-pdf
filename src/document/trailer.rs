@@ -10,8 +10,9 @@ pub fn print_trailer<'a>(
     let mut text: Vec<u8> = Vec::new();
     let mut dictionary = Dictionary::new();
 
-    let identifier = PdfString::new(Uuid::new_v4().to_string(), PdfStringEncoding::Hexadecimal);
-    let update = PdfString::new(Uuid::new_v4().to_string(), PdfStringEncoding::Hexadecimal);
+    let identifier =
+        PdfString::from_string(Uuid::new_v4().to_string(), PdfStringEncoding::Hexadecimal);
+    let update = PdfString::from_string(Uuid::new_v4().to_string(), PdfStringEncoding::Hexadecimal);
 
     dictionary
         .insert("Size", Number::new(*reference_count as f32))
